@@ -4,46 +4,22 @@ import { BarChart3, Zap, TrendingUp, Users, ChevronDown } from 'lucide-react';
 function VideoPreview() {
   return (
     <div className="relative">
-      {/* iPhone Frame */}
-      <div className="relative w-80 h-[600px] mx-auto">
-        {/* iPhone Body */}
-        <div className="absolute inset-0 bg-gradient-to-b from-gray-800 to-gray-900 rounded-[3rem] border-8 border-gray-700 shadow-2xl">
-          {/* Screen */}
-          <div className="absolute inset-2 bg-black rounded-[2.5rem] overflow-hidden">
-            {/* Notch */}
-            <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-32 h-8 bg-black rounded-b-3xl z-10"></div>
-            
-            {/* Video Container */}
-            <div className="absolute inset-0 pt-8 pb-12 px-2">
-              <video 
-                autoPlay 
-                loop 
-                muted 
-                playsInline
-                className="w-full h-full object-cover rounded-2xl"
-                poster="https://via.placeholder.com/300x600/1b2326/ffffff?text=Video+Loading"
-              >
-                <source src="/demo-video.mp4" type="video/mp4" />
-                <source src="https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4" type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-            </div>
-            
-            {/* Home Indicator */}
-            <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-white rounded-full opacity-60"></div>
-          </div>
-          
-          {/* Side Button */}
-          <div className="absolute top-20 -right-1 w-1 h-8 bg-gray-600 rounded-l-full"></div>
-          
-          {/* Volume Buttons */}
-          <div className="absolute top-32 -left-1 w-1 h-6 bg-gray-600 rounded-r-full"></div>
-          <div className="absolute top-40 -left-1 w-1 h-6 bg-gray-600 rounded-r-full"></div>
-        </div>
-      </div>
+      {/* MP4 Video */}
+      <video 
+        autoPlay 
+        loop 
+        muted 
+        playsInline
+        className="w-full max-w-xs rounded-xl shadow-2xl border border-[#3d4549]"
+        poster="https://via.placeholder.com/400x800/1b2326/ffffff?text=Video+Loading"
+      >
+        <source src="/demo-video.mp4" type="video/mp4" />
+        <source src="https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
       
       {/* Glow Effect */}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#1279ff]/20 to-[#fffa00]/20 rounded-[3rem] blur-xl -z-10 scale-110"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-[#1279ff]/20 to-[#fffa00]/20 rounded-xl blur-xl -z-10"></div>
       
       {/* Play Button Overlay (optional) */}
       <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300 pointer-events-none">
