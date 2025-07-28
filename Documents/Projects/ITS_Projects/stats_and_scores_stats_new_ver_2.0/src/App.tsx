@@ -1,20 +1,59 @@
 import { useState } from 'react';
 import { BarChart3, Zap, TrendingUp, Users, ChevronDown } from 'lucide-react';
 
-function VideoPreview() {
+function VideoPreview({ selectedVideo }: { selectedVideo: string }) {
+  console.log('VideoPreview rendered with selectedVideo:', selectedVideo);
+  
+  const getVideoSource = () => {
+    switch (selectedVideo) {
+      case 'advanced-stats':
+        console.log('Video source: /advanced-stats-video.mp4');
+        return '/advanced-stats-video.mp4';
+      case 'live-match':
+        console.log('Video source: /live-match-video.mp4');
+        return '/live-match-video.mp4';
+      default:
+        console.log('Video source: /demo-video.mp4');
+        return '/demo-video.mp4';
+    }
+  };
+
+  const getVideoPoster = () => {
+    switch (selectedVideo) {
+      case 'advanced-stats':
+        return ""; // Remove poster for advanced stats video
+      default:
+        return ""; // Remove poster for demo video
+    }
+  };
+
   return (
     <div className="relative">
+      {/* Video Label */}
+      <div className="absolute top-2 left-2 z-10 bg-black/70 text-white px-2 py-1 rounded text-xs">
+        Selected: {selectedVideo} | 
+        {selectedVideo === 'advanced-stats' ? 'New Line-Up Video' : 
+         selectedVideo === 'live-match' ? 'Commentary Extended Video' : 'Demo Video'}
+      </div>
+      
       {/* MP4 Video */}
       <video 
+        key={selectedVideo} // Force re-render when video changes
+        src={getVideoSource()} // Direct src attribute
         autoPlay 
         loop 
         muted 
         playsInline
         className="w-full max-w-xs rounded-xl shadow-2xl border border-[#3d4549]"
-        poster="https://via.placeholder.com/400x800/1b2326/ffffff?text=Video+Loading"
+        poster={getVideoPoster()}
+        onError={(e) => {
+          console.error('Video error:', e);
+          console.error('Failed to load:', getVideoSource());
+        }}
+        onLoadStart={() => console.log('Video loading started:', getVideoSource())}
+        onCanPlay={() => console.log('Video can play:', getVideoSource())}
+        onLoadedData={() => console.log('Video loaded data:', getVideoSource())}
       >
-        <source src="/demo-video.mp4" type="video/mp4" />
-        <source src="https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
       
@@ -39,19 +78,38 @@ function FeatureItem({
   description, 
   detailedContent, 
   isExpanded, 
-  onToggle 
+  onToggle,
+  onVideoChange
 }: { 
   icon: any, 
   title: string, 
   description: string, 
   detailedContent: string,
   isExpanded: boolean,
-  onToggle: () => void
+  onToggle: () => void,
+  onVideoChange?: (videoId: string) => void
 }) {
+  const handleClick = () => {
+    onToggle();
+    // Change video based on which feature is clicked
+    if (onVideoChange) {
+      if (title === "New Line-Up Tab") {
+        console.log('Switching to advanced-stats video');
+        onVideoChange('advanced-stats');
+      } else if (title === "Commentary Extended Feed") {
+        console.log('Switching to live-match video');
+        onVideoChange('live-match');
+      } else {
+        console.log('Switching to demo video');
+        onVideoChange('demo'); // Reset to default video for other features
+      }
+    }
+  };
+
   return (
     <div 
       className="cursor-pointer p-4 rounded-lg bg-gradient-to-r from-[#242d33]/50 to-[#1b2326]/50 border border-[#3d4549]/50 hover:border-[#1279ff]/50 transition-all duration-300"
-      onClick={onToggle}
+      onClick={handleClick}
     >
       <div className="flex items-start gap-4">
         <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-[#1279ff] to-[#fffa00] rounded-lg flex items-center justify-center shadow-lg">
@@ -93,6 +151,7 @@ function SellingPoint({ title, description }: { title: string, description: stri
 
 export default function App() {
   const [expandedFeatures, setExpandedFeatures] = useState<Set<number>>(new Set());
+  const [selectedVideo, setSelectedVideo] = useState('demo'); // 'demo' or 'advanced-stats'
 
   const toggleFeature = (index: number) => {
     const newExpanded = new Set(expandedFeatures);
@@ -113,13 +172,13 @@ export default function App() {
     },
     {
       icon: BarChart3,
-      title: "Advanced Statistics",
+      title: "New Line-Up Tab",
       description: "Comprehensive match analytics including possession, passes, tackles, and performance metrics for detailed analysis.",
       detailedContent: "Deep dive into comprehensive metrics including: passing accuracy by field zones, progressive passes, key passes leading to shots, defensive actions per zone, sprint distances, heart rate monitoring integration, and custom performance indicators. Our AI engine correlates over 200 statistical parameters to generate actionable insights for coaches, analysts, and performance specialists."
     },
     {
       icon: TrendingUp,
-      title: "Performance Tracking",
+      title: "Commentary Extended Feed",
       description: "Monitor player and team performance trends across seasons with predictive analytics and insights.",
       detailedContent: "Longitudinal performance analysis featuring: injury risk assessment, fatigue monitoring, form prediction models, seasonal trend analysis, and peer comparison matrices. Our predictive algorithms use historical data spanning 10+ seasons to forecast performance drops, optimal rotation strategies, and identify emerging talent patterns across different leagues and playing styles."
     },
@@ -139,32 +198,16 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#080e12] via-[#1b2326] to-[#242d33] text-[#f9fafa]">
-      {/* Header */}
-      <header className="text-center py-12 px-8">
-        <div className="max-w-6xl mx-auto">
-          <h1 className="text-5xl lg:text-6xl font-bold mb-4 bg-gradient-to-r from-[#f9fafa] via-[#1279ff] to-[#fffa00] bg-clip-text text-transparent">
-            Stats and Score Version 2.0
-          </h1>
-          <p className="text-xl text-[#b3b9bb] max-w-2xl mx-auto">
-            Advanced football analytics platform delivering real-time insights and comprehensive match data
-          </p>
-        </div>
-      </header>
-
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-8 pb-16">
+      <main className="max-w-7xl mx-auto px-8 pt-8 pb-16">
         <div className="grid lg:grid-cols-[1fr_1.5fr] gap-12 items-start">
           {/* Left Column - Video Preview */}
           <div className="flex justify-center lg:justify-start">
-            <VideoPreview />
+            <VideoPreview selectedVideo={selectedVideo} />
           </div>
 
           {/* Right Column - Features */}
           <div className="space-y-6">
-            <div className="mb-8">
-              <h2 className="text-3xl font-bold mb-2 text-[#f9fafa]">Key Features</h2>
-              <div className="w-20 h-1 bg-gradient-to-r from-[#1279ff] to-[#fffa00] rounded"></div>
-            </div>
             
             {features.map((feature, index) => (
               <FeatureItem
@@ -175,6 +218,7 @@ export default function App() {
                 detailedContent={feature.detailedContent}
                 isExpanded={expandedFeatures.has(index)}
                 onToggle={() => toggleFeature(index)}
+                onVideoChange={(videoId) => setSelectedVideo(videoId)}
               />
             ))}
           </div>
